@@ -26,7 +26,7 @@ class BudgetCalculator
 
         if ($start->isSameDay($end)) {
             return $monthBudgets[$start->format('Ym')] *
-                ($end->diffInDays($start) + 1 / $start->daysInMonth);
+                ($end->diffInDays($start) + 1) / $start->daysInMonth;
         }
 
         return $monthBudgets[$start->format('Ym')];
