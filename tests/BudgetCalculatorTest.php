@@ -7,8 +7,8 @@ require __DIR__ . '/../src/BudgetCalculator.php';
 class BudgetCalculatorTest extends TestCase
 {
     /**
-      * @test
-      */
+     * @test
+     */
     public function it_should_initialize_an_instance_of_calculator()
     {
         // Act
@@ -19,20 +19,25 @@ class BudgetCalculatorTest extends TestCase
     }
 
     /**
-      * @test
-      */
-    public function it_should_get_one_month_budget()
+     * @test
+     * @dataProvider fixtureProvider
+     */
+    public function it_should_calculate_budget($startDate, $endDate, $expected)
     {
         // Arrange
         $calculator = new BudgetCalculator();
 
         // Act
-        $startDate = '2018/01/01';
-        $endDate = '2018/01/31';
         $actual = $calculator->calculate($startDate, $endDate);
 
         // Assert
-        $expected = 3100;
         $this->assertEquals($expected, $actual);
+    }
+
+    public function fixtureProvider()
+    {
+        return [
+            ['2018/01/01', '2018/01/31', 3100]
+        ];
     }
 }
