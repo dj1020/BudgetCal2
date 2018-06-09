@@ -52,6 +52,8 @@ class BudgetCalculatorTest extends TestCase
             ['2018/04/03', '2018/06/10', (3000 - 200) + 3100 + 1000],
             ['2018/01/03', '2018/06/10', (3100 - 200) + 5600 + 0 + 3000 + 3100 + 1000],
             ['2018/01/01', '2020/02/29', 3100 + 5600 + 3000 + 3100 + 3000 + 310 + 8700],
+            ['2018/01/05', '2020/02/28', (3100 - 400) + 5600 + 3000 + 3100 + 3000 + 310 + (8700 - 300)],
+            ['2017/11/05', '2020/04/28', 3100 + 5600 + 3000 + 3100 + 3000 + 310 + 8700],
         ];
     }
 
@@ -66,5 +68,23 @@ class BudgetCalculatorTest extends TestCase
             '202001' => 310,  // 31*10
             '202002' => 8700, // 29*300
         ];
+    }
+
+    /**
+      * @test
+      */
+    public function it_should_throw_exception_for_invalid_dates()
+    {
+        // Arrange
+        $model = Mockery::mock(new BudgetModel());
+        $calculator = new BudgetCalculator($model);
+
+        // Assume
+        $this->expectException(\Exception::class);
+
+        // Act
+        $startDate = '2018/01/05';
+        $invalidEndDate = '2018/01/01';
+        $calculator->calculate($startDate, $invalidEndDate);
     }
 }

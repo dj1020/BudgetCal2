@@ -18,8 +18,18 @@ class BudgetCalculator
         $this->model = $model ?: new BudgetModel();
     }
 
+    /**
+     * @param $startDate
+     * @param $endDate
+     * @return float|int
+     * @throws \Exception
+     */
     public function calculate($startDate, $endDate)
     {
+        if (! $this->isValidDates($startDate, $endDate)) {
+            throw new Exception('invalid dates');
+        }
+
         $monthBudgets = $this->model->query($startDate, $endDate);
 
         list($start, $end) = [new Carbon($startDate), new Carbon($endDate)];
@@ -65,5 +75,10 @@ class BudgetCalculator
 
         return $budgets[$start->format('Ym')] *
             ($end->diffInDays($start) + 1) / $start->daysInMonth;
+    }
+
+    private function isValidDates($startDate, $endDate)
+    {
+        return (new Carbon($endDate)) >= (new Carbon($startDate));
     }
 }
