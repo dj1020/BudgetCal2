@@ -26,6 +26,9 @@ class BudgetCalculatorTest extends TestCase
     {
         // Arrange
         $model = Mockery::mock(new BudgetModel());
+        $model->shouldReceive('query')
+            ->with($startDate, $endDate)
+            ->andReturn($this->getStubData());
         $calculator = new BudgetCalculator($model);
 
         // Act
@@ -40,6 +43,18 @@ class BudgetCalculatorTest extends TestCase
         return [
             ['2018/01/01', '2018/01/31', 3100],
             ['2018/02/01', '2018/02/28', 5600],
+        ];
+    }
+
+    private function getStubData()
+    {
+        return [
+            '201801' => 3100,
+            '201802' => 5600, // 28*200
+            '201804' => 3000,
+            '201805' => 3100,
+            '202001' => 310,  // 31*10
+            '202002' => 8700, // 29*300
         ];
     }
 }
