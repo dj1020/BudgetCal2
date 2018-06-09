@@ -32,25 +32,15 @@ class BudgetCalculator
         $monthList = $this->getMonthList($start, $end);
         $sum = 0;
         foreach ($monthList as $month) {
-            if ($month->isSameMonth($start)) {
-                $sum += $this->getPartialBudget(
-                    $start,
-                    $month->copy()->lastOfMonth(),
-                    $monthBudgets
-                );
-            } elseif ($month->isSameMonth($end)) {
-                $sum += $this->getPartialBudget(
-                    $month->copy()->firstOfMonth(),
-                    $end,
-                    $monthBudgets
-                );
-            } else {
-                $sum += $this->getPartialBudget(
-                    $month->copy()->firstOfMonth(),
-                    $month->copy()->lastOfMonth(),
-                    $monthBudgets
-                );
-            }
+            $periodStart = $month->isSameMonth($start)
+                ? $start
+                : $month->copy()->firstOfMonth();
+
+            $periodEnd = $month->isSameMonth($end)
+                ? $end
+                : $month->copy()->lastOfMonth();
+
+            $sum += $this->getPartialBudget($periodStart, $periodEnd, $monthBudgets);
         }
 
         return $sum;
