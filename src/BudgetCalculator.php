@@ -38,6 +38,12 @@ class BudgetCalculator
                     $month->copy()->lastOfMonth(),
                     $monthBudgets
                 );
+            } elseif ($month->isSameMonth($end)) {
+                $sum += $this->getPartialBudget(
+                    $month->copy()->firstOfMonth(),
+                    $end,
+                    $monthBudgets
+                );
             } else {
                 $sum += $monthBudgets[$month->format('Ym')];
             }
