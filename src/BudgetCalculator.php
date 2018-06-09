@@ -33,7 +33,7 @@ class BudgetCalculator
         $monthList = $this->getMonthList($start, $end);
         $sum = 0;
         foreach ($monthList as $month) {
-            $sum += $monthBudgets[$month];
+            $sum += $monthBudgets[$month->format('Ym')];
         }
 
         return $sum;
@@ -44,7 +44,7 @@ class BudgetCalculator
         $period = new CarbonPeriod($start, '1 month', $end);
         $list = [];
         foreach ($period as $month) {
-            $list[] = $month->format('Ym');
+            $list[] = $month;
         }
 
         return $list;
