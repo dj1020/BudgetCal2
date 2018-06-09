@@ -60,6 +60,10 @@ class BudgetCalculator
 
     private function getPartialBudget(Carbon $start, Carbon $end, array $budgets)
     {
+        if (! isset($budgets[$start->format('Ym')])) {
+            return 0;
+        }
+
         return $budgets[$start->format('Ym')] *
             ($end->diffInDays($start) + 1) / $start->daysInMonth;
     }
