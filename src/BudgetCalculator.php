@@ -22,8 +22,7 @@ class BudgetCalculator
     {
         $monthBudgets = $this->model->query($startDate, $endDate);
 
-        $start = new Carbon($startDate);
-        $end = new Carbon($endDate);
+        list($start, $end) = [new Carbon($startDate), new Carbon($endDate)];
 
         $monthList = $this->getMonthList($start, $end);
         $sum = 0;
