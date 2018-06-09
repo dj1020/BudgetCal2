@@ -35,13 +35,7 @@ class BudgetCalculator
                 ? $end
                 : $month->copy()->lastOfMonth();
 
-            $partial = $this->getPartialBudget($periodStart, $periodEnd, $monthBudgets);
-//            printf('%s:%s  %d' . PHP_EOL,
-//                (string)$periodStart->format('Y-m-d'),
-//                (string)$periodEnd->format('Y-m-d'),
-//                $partial
-//            );
-            $sum += $partial;
+            $sum += $this->getPartialBudget($periodStart, $periodEnd, $monthBudgets);
         }
 
         return $sum;
