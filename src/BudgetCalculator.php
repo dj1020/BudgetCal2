@@ -26,16 +26,18 @@ class BudgetCalculator
         $end = new Carbon($endDate);
 
         if ($start->isSameMonth($end)) {
-            return $monthBudgets[$start->format('Ym')] *
-                ($end->diffInDays($start) + 1) / $start->daysInMonth;
+            return $this->getPartialBudget($start, $end, $monthBudgets);
         }
 
         $monthList = $this->getMonthList($start, $end);
         $sum = 0;
         foreach ($monthList as $month) {
             if ($month->isSameMonth($start)) {
-                $sum += $monthBudgets[$month->format('Ym')] *
-                    ($month->copy()->lastOfMonth()->diffInDays($start) + 1) / $month->daysInMonth;
+                $sum += $this->getPartialBudget(
+                    $start,
+                    $month->copy()->lastOfMonth(),
+                    $monthBudgets
+                );
             } else {
                 $sum += $monthBudgets[$month->format('Ym')];
             }
@@ -58,5 +60,11 @@ class BudgetCalculator
         }
 
         return $list;
+    }
+
+    private function getPartialBudget(Carbon $start, Carbon $end, array $budgets)
+    {
+        return $budgets[$start->format('Ym')] *
+            ($end->diffInDays($start) + 1) / $start->daysInMonth;
     }
 }
