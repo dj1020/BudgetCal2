@@ -25,10 +25,6 @@ class BudgetCalculator
         $start = new Carbon($startDate);
         $end = new Carbon($endDate);
 
-        if ($start->isSameMonth($end)) {
-            return $this->getPartialBudget($start, $end, $monthBudgets);
-        }
-
         $monthList = $this->getMonthList($start, $end);
         $sum = 0;
         foreach ($monthList as $month) {
