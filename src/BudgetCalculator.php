@@ -45,7 +45,11 @@ class BudgetCalculator
                     $monthBudgets
                 );
             } else {
-                $sum += $monthBudgets[$month->format('Ym')];
+                $sum += $this->getPartialBudget(
+                    $month->copy()->firstOfMonth(),
+                    $month->copy()->lastOfMonth(),
+                    $monthBudgets
+                );
             }
         }
 
