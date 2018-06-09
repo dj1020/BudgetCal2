@@ -33,12 +33,22 @@ class BudgetCalculator
         $monthList = $this->getMonthList($start, $end);
         $sum = 0;
         foreach ($monthList as $month) {
-            $sum += $monthBudgets[$month->format('Ym')];
+            if ($month->isSameMonth($start)) {
+                $sum += $monthBudgets[$month->format('Ym')] *
+                    ($month->copy()->lastOfMonth()->diffInDays($start) + 1) / $month->daysInMonth;
+            } else {
+                $sum += $monthBudgets[$month->format('Ym')];
+            }
         }
 
         return $sum;
     }
 
+    /**
+     * @param $start
+     * @param $end
+     * @return Carbon[]
+     */
     private function getMonthList($start, $end)
     {
         $period = new CarbonPeriod($start, '1 month', $end);
