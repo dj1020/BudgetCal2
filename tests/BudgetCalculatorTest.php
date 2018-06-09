@@ -25,7 +25,8 @@ class BudgetCalculatorTest extends TestCase
     public function it_should_calculate_budget($startDate, $endDate, $expected)
     {
         // Arrange
-        $calculator = new BudgetCalculator();
+        $model = Mockery::mock(new BudgetModel());
+        $calculator = new BudgetCalculator($model);
 
         // Act
         $actual = $calculator->calculate($startDate, $endDate);
@@ -37,7 +38,8 @@ class BudgetCalculatorTest extends TestCase
     public function fixtureProvider()
     {
         return [
-            ['2018/01/01', '2018/01/31', 3100]
+            ['2018/01/01', '2018/01/31', 3100],
+            ['2018/02/01', '2018/02/28', 5600],
         ];
     }
 }
