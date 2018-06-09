@@ -22,6 +22,12 @@ class BudgetCalculator
         $monthBudgets = $this->model->query($startDate, $endDate);
 
         $start = new Carbon($startDate);
+        $end = new Carbon($endDate);
+
+        if ($start->isSameDay($end)) {
+            return $monthBudgets[$start->format('Ym')] *
+                ($end->diffInDays($start) + 1 / $start->daysInMonth);
+        }
 
         return $monthBudgets[$start->format('Ym')];
     }
