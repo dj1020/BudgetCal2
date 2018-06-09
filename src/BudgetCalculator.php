@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 require __DIR__ . '/BudgetModel.php';
 
@@ -29,6 +30,23 @@ class BudgetCalculator
                 ($end->diffInDays($start) + 1) / $start->daysInMonth;
         }
 
-        return $monthBudgets[$start->format('Ym')];
+        $monthList = $this->getMonthList($start, $end);
+        $sum = 0;
+        foreach ($monthList as $month) {
+            $sum += $monthBudgets[$month];
+        }
+
+        return $sum;
+    }
+
+    private function getMonthList($start, $end)
+    {
+        $period = new CarbonPeriod($start, '1 month', $end);
+        $list = [];
+        foreach ($period as $month) {
+            $list[] = $month->format('Ym');
+        }
+
+        return $list;
     }
 }
