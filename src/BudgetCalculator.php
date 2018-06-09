@@ -27,15 +27,21 @@ class BudgetCalculator
         $monthList = $this->getMonthList($start, $end);
         $sum = 0;
         foreach ($monthList as $month) {
-            $periodStart = $month->isSameMonth($start)
+            $periodStart = $month->isSameMonth($start, true)
                 ? $start
                 : $month->copy()->firstOfMonth();
 
-            $periodEnd = $month->isSameMonth($end)
+            $periodEnd = $month->isSameMonth($end, true)
                 ? $end
                 : $month->copy()->lastOfMonth();
 
-            $sum += $this->getPartialBudget($periodStart, $periodEnd, $monthBudgets);
+            $partial = $this->getPartialBudget($periodStart, $periodEnd, $monthBudgets);
+//            printf('%s:%s  %d' . PHP_EOL,
+//                (string)$periodStart->format('Y-m-d'),
+//                (string)$periodEnd->format('Y-m-d'),
+//                $partial
+//            );
+            $sum += $partial;
         }
 
         return $sum;
