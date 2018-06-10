@@ -1,8 +1,5 @@
 <?php
 
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-
 require __DIR__ . '/BudgetModel.php';
 require __DIR__ . '/Budget.php';
 require __DIR__ . '/Period.php';
@@ -28,10 +25,6 @@ class BudgetCalculator
      */
     public function calculate($startDate, $endDate)
     {
-        if ( ! $this->isValidDates($startDate, $endDate)) {
-            throw new Exception('invalid dates');
-        }
-
         $monthBudgets = $this->transformBudgets($this->model->query($startDate, $endDate));
         $period = new Period($startDate, $endDate);
 
@@ -46,11 +39,6 @@ class BudgetCalculator
         }
 
         return $sum;
-    }
-
-    private function isValidDates($startDate, $endDate)
-    {
-        return (new Carbon($endDate)) >= (new Carbon($startDate));
     }
 
     private function transformBudgets(array $monthBudgets)

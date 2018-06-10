@@ -17,6 +17,10 @@ class Period
     {
         $this->startDate = new Carbon($startDate);
         $this->endDate = new Carbon($endDate);
+
+        if ( ! $this->isValidPeriod()) {
+            throw new Exception('invalid period');
+        }
     }
 
     public function monthList()
@@ -58,5 +62,10 @@ class Period
             : $otherPeriod->end();
 
         return new Period($overlapStart, $overlapEnd);
+    }
+
+    private function isValidPeriod()
+    {
+        return $this->end() >= $this->start();
     }
 }
