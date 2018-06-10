@@ -54,17 +54,15 @@ class BudgetCalculator
     /**
      * @param $start
      * @param $end
-     * @return Carbon[]
+     * @return CarbonPeriod
      */
-    private function getMonthList($start, $end)
+    private function getMonthList(Carbon $start, Carbon $end)
     {
-        $period = new CarbonPeriod($start, '1 month', $end);
-        $list = [];
-        foreach ($period as $month) {
-            $list[] = $month;
-        }
-
-        return $list;
+        return new CarbonPeriod(
+            $start->copy()->firstOfMonth(),
+            '1 month',
+            $end->copy()->endOfMonth()
+        );
     }
 
     private function getPartialBudget(Carbon $start, Carbon $end, array $budgets)
