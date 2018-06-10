@@ -25,6 +25,7 @@ class BudgetCalculator
      */
     public function calculate($startDate, $endDate)
     {
+        /** @var Budget[] $monthBudgets */
         $monthBudgets = $this->transformBudgets($this->model->query($startDate, $endDate));
         $period = new Period($startDate, $endDate);
 
@@ -33,18 +34,6 @@ class BudgetCalculator
             $total += $budget->effectiveAmount($period);
         }
         return $total;
-
-//        $sum = 0;
-//        foreach ($period->monthList() as $month) {
-//            /** @var Budget $budget */
-//            $budget = $monthBudgets[$month->format('Ym')] ?? null;
-//
-//            if ( ! is_null($budget)) {
-//                $sum += $budget->effectiveAmount($period);
-//            }
-//        }
-//
-//        return $sum;
     }
 
     private function transformBudgets(array $monthBudgets)

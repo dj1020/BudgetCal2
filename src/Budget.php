@@ -61,7 +61,7 @@ class Budget
 
     public function effectiveAmount(Period $period)
     {
-        return $period->overlap($this->period())->days() * $this->dailyAmount();
+        return $period->overlapDays($this->period()) * $this->dailyAmount();
     }
 
     private function period()

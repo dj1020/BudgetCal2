@@ -42,26 +42,23 @@ class Period
         return $this->endDate;
     }
 
-    public function days()
-    {
-        return ($this->endDate->diffInDays($this->startDate) + 1);
-    }
-
     /**
-     * @param Budget $budget
-     * @return Period
+     * @param Period $otherPeriod
+     * @return integer
      */
-    public function overlap(Period $otherPeriod)
+    public function overlapDays(Period $otherPeriod)
     {
         $overlapStart = $this->start() > $otherPeriod->start()
-            ? $this->start()
-            : $otherPeriod->start();
+            ? $this->start()->copy()
+            : $otherPeriod->start()->copy();
 
         $overlapEnd = $this->end() < $otherPeriod->end()
-            ? $this->end()
-            : $otherPeriod->end();
+            ? $this->end()->copy()
+            : $otherPeriod->end()->copy();
 
-        return new Period($overlapStart, $overlapEnd);
+        return ($overlapEnd >= $overlapStart)
+            ? $overlapEnd->diffInDays($overlapStart) + 1
+            : 0;
     }
 
     private function isValidPeriod()
