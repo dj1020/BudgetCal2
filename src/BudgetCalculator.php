@@ -28,12 +28,10 @@ class BudgetCalculator
         /** @var Budget[] $monthBudgets */
         $monthBudgets = $this->transformBudgets($this->model->query($startDate, $endDate));
         $period = new Period($startDate, $endDate);
-        
-        return array_reduce($monthBudgets, function ($carry, Budget $budget) use ($period) {
-            $carry = $carry + $budget->effectiveAmount($period);
 
-            return $carry;
-        }, 0);
+        return array_sum(array_map(function(Budget $budget) use ($period) {
+            return $budget->effectiveAmount($period);
+        }, $monthBudgets));
     }
 
     private function transformBudgets(array $monthBudgets)
