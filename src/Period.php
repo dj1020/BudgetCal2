@@ -43,6 +43,10 @@ class Period
         return ($this->endDate->diffInDays($this->startDate) + 1);
     }
 
+    /**
+     * @param Budget $budget
+     * @return Period
+     */
     public function overlap(Budget $budget)
     {
         $overlapStart = $this->start()->isSameMonth($budget->yearMonth(), true)

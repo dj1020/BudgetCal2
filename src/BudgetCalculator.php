@@ -41,18 +41,11 @@ class BudgetCalculator
             $budget = $monthBudgets[$month->format('Ym')] ?? null;
 
             if ( ! is_null($budget)) {
-                $effectiveAmount = $this->effectiveAmount($period, $budget);
-
-                $sum += $effectiveAmount;
+                $sum += $budget->effectiveAmount($period);
             }
         }
 
         return $sum;
-    }
-
-    private function effectiveAmount(Period $period, Budget $budget)
-    {
-        return $period->overlap($budget)->days() * $budget->dailyAmount();
     }
 
     private function isValidDates($startDate, $endDate)

@@ -58,4 +58,9 @@ class Budget
     {
         return $this->amount() / $this->daysInMonth();
     }
+
+    public function effectiveAmount(Period $period)
+    {
+        return $period->overlap($this)->days() * $this->dailyAmount();
+    }
 }
