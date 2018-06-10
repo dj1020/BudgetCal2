@@ -41,15 +41,7 @@ class BudgetCalculator
             $budget = $monthBudgets[$month->format('Ym')] ?? null;
 
             if ( ! is_null($budget)) {
-                $overlapStart = $period->start()->isSameMonth($budget->yearMonth(), true)
-                    ? $period->start()
-                    : $budget->firstDay();
-
-                $overlapEnd = $period->end()->isSameMonth($budget->yearMonth(), true)
-                    ? $period->end()
-                    : $budget->lastDay();
-
-                $effectiveAmount = $this->effectiveAmount(new Period($overlapStart, $overlapEnd), $budget);
+                $effectiveAmount = $this->effectiveAmount($period, $budget);
 
                 $sum += $effectiveAmount;
             }
@@ -60,7 +52,17 @@ class BudgetCalculator
 
     private function effectiveAmount(Period $period, Budget $budget)
     {
-        return $budget->amount() * $period->days() / $budget->daysInMonth();
+        $overlapStart = $period->start()->isSameMonth($budget->yearMonth(), true)
+            ? $period->start()
+            : $budget->firstDay();
+
+        $overlapEnd = $period->end()->isSameMonth($budget->yearMonth(), true)
+            ? $period->end()
+            : $budget->lastDay();
+
+        $effectivePeriod = new Period($overlapStart, $overlapEnd);
+
+        return $effectivePeriod->days() * $budget->amount() / $budget->daysInMonth();
     }
 
     private function isValidDates($startDate, $endDate)
