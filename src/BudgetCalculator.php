@@ -5,6 +5,7 @@ use Carbon\CarbonPeriod;
 
 require __DIR__ . '/BudgetModel.php';
 require __DIR__ . '/Budget.php';
+require __DIR__ . '/Period.php';
 
 class BudgetCalculator
 {
@@ -32,47 +33,34 @@ class BudgetCalculator
         }
 
         $monthBudgets = $this->transformBudgets($this->model->query($startDate, $endDate));
-
-        list($start, $end) = [new Carbon($startDate), new Carbon($endDate)];
+        $period = new Period($startDate, $endDate);
 
         $sum = 0;
-        foreach ($this->getMonthList($start, $end) as $month) {
+        foreach ($period->monthList() as $month) {
+            /** @var Budget $budget */
             $budget = $monthBudgets[$month->format('Ym')] ?? null;
 
             if ( ! is_null($budget)) {
-                $periodStart = $month->isSameMonth($start, true)
-                    ? $start
-                    : $month->copy()->firstOfMonth();
+                $overlapStart = $period->start()->isSameMonth($budget->yearMonth(), true)
+                    ? $period->start()
+                    : $budget->firstDay();
 
-                $periodEnd = $month->isSameMonth($end, true)
-                    ? $end
-                    : $month->copy()->lastOfMonth();
+                $overlapEnd = $period->end()->isSameMonth($budget->yearMonth(), true)
+                    ? $period->end()
+                    : $budget->lastDay();
 
-                $sum += $this->getPartialBudget($periodStart, $periodEnd, $budget);
+                $effectiveAmount = $this->effectiveAmount(new Period($overlapStart, $overlapEnd), $budget);
+
+                $sum += $effectiveAmount;
             }
         }
 
         return $sum;
     }
 
-    /**
-     * @param $start
-     * @param $end
-     * @return CarbonPeriod
-     */
-    private function getMonthList(Carbon $start, Carbon $end)
+    private function effectiveAmount(Period $period, Budget $budget)
     {
-        return new CarbonPeriod(
-            $start->copy()->firstOfMonth(),
-            '1 month',
-            $end->copy()->endOfMonth()
-        );
-    }
-
-    private function getPartialBudget(Carbon $start, Carbon $end, Budget $budget)
-    {
-        return $budget->amount() *
-            ($end->diffInDays($start) + 1) / $start->daysInMonth;
+        return $budget->amount() * $period->days() / $budget->daysInMonth();
     }
 
     private function isValidDates($startDate, $endDate)
