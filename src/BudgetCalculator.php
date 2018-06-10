@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
 require __DIR__ . '/BudgetModel.php';
+require __DIR__ . '/Budget.php';
 
 class BudgetCalculator
 {
@@ -26,26 +27,29 @@ class BudgetCalculator
      */
     public function calculate($startDate, $endDate)
     {
-        if (! $this->isValidDates($startDate, $endDate)) {
+        if ( ! $this->isValidDates($startDate, $endDate)) {
             throw new Exception('invalid dates');
         }
 
-        $monthBudgets = $this->model->query($startDate, $endDate);
+        $monthBudgets = $this->transformBudgets($this->model->query($startDate, $endDate));
 
         list($start, $end) = [new Carbon($startDate), new Carbon($endDate)];
 
-        $monthList = $this->getMonthList($start, $end);
         $sum = 0;
-        foreach ($monthList as $month) {
-            $periodStart = $month->isSameMonth($start, true)
-                ? $start
-                : $month->copy()->firstOfMonth();
+        foreach ($this->getMonthList($start, $end) as $month) {
+            $budget = $monthBudgets[$month->format('Ym')] ?? null;
 
-            $periodEnd = $month->isSameMonth($end, true)
-                ? $end
-                : $month->copy()->lastOfMonth();
+            if ( ! is_null($budget)) {
+                $periodStart = $month->isSameMonth($start, true)
+                    ? $start
+                    : $month->copy()->firstOfMonth();
 
-            $sum += $this->getPartialBudget($periodStart, $periodEnd, $monthBudgets);
+                $periodEnd = $month->isSameMonth($end, true)
+                    ? $end
+                    : $month->copy()->lastOfMonth();
+
+                $sum += $this->getPartialBudget($periodStart, $periodEnd, $budget);
+            }
         }
 
         return $sum;
@@ -65,18 +69,24 @@ class BudgetCalculator
         );
     }
 
-    private function getPartialBudget(Carbon $start, Carbon $end, array $budgets)
+    private function getPartialBudget(Carbon $start, Carbon $end, Budget $budget)
     {
-        if (! isset($budgets[$start->format('Ym')])) {
-            return 0;
-        }
-
-        return $budgets[$start->format('Ym')] *
+        return $budget->amount() *
             ($end->diffInDays($start) + 1) / $start->daysInMonth;
     }
 
     private function isValidDates($startDate, $endDate)
     {
         return (new Carbon($endDate)) >= (new Carbon($startDate));
+    }
+
+    private function transformBudgets(array $monthBudgets)
+    {
+        $budgets = [];
+        foreach ($monthBudgets as $yearMonth => $amount) {
+            $budgets[$yearMonth] = new Budget($yearMonth, $amount);
+        }
+
+        return $budgets;
     }
 }
