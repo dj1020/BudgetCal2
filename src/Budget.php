@@ -53,4 +53,9 @@ class Budget
     {
         return $this->yearMonth->daysInMonth;
     }
+
+    public function dailyAmount()
+    {
+        return $this->amount() / $this->daysInMonth();
+    }
 }

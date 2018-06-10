@@ -52,17 +52,7 @@ class BudgetCalculator
 
     private function effectiveAmount(Period $period, Budget $budget)
     {
-        $overlapStart = $period->start()->isSameMonth($budget->yearMonth(), true)
-            ? $period->start()
-            : $budget->firstDay();
-
-        $overlapEnd = $period->end()->isSameMonth($budget->yearMonth(), true)
-            ? $period->end()
-            : $budget->lastDay();
-
-        $effectivePeriod = new Period($overlapStart, $overlapEnd);
-
-        return $effectivePeriod->days() * $budget->amount() / $budget->daysInMonth();
+        return $period->overlap($budget)->days() * $budget->dailyAmount();
     }
 
     private function isValidDates($startDate, $endDate)

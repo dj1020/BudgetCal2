@@ -42,4 +42,17 @@ class Period
     {
         return ($this->endDate->diffInDays($this->startDate) + 1);
     }
+
+    public function overlap(Budget $budget)
+    {
+        $overlapStart = $this->start()->isSameMonth($budget->yearMonth(), true)
+            ? $this->start()
+            : $budget->firstDay();
+
+        $overlapEnd = $this->end()->isSameMonth($budget->yearMonth(), true)
+            ? $this->end()
+            : $budget->lastDay();
+
+        return new Period($overlapStart, $overlapEnd);
+    }
 }
