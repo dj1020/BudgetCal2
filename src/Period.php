@@ -47,15 +47,15 @@ class Period
      * @param Budget $budget
      * @return Period
      */
-    public function overlap(Budget $budget)
+    public function overlap(Period $otherPeriod)
     {
-        $overlapStart = $this->start()->isSameMonth($budget->yearMonth(), true)
+        $overlapStart = $this->start() > $otherPeriod->start()
             ? $this->start()
-            : $budget->firstDay();
+            : $otherPeriod->start();
 
-        $overlapEnd = $this->end()->isSameMonth($budget->yearMonth(), true)
+        $overlapEnd = $this->end() < $otherPeriod->end()
             ? $this->end()
-            : $budget->lastDay();
+            : $otherPeriod->end();
 
         return new Period($overlapStart, $overlapEnd);
     }
